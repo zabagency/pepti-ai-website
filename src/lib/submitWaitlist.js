@@ -4,7 +4,7 @@ export async function submitWaitlist(email) {
   // 1. Save to Supabase (skipped if not yet configured)
   if (supabase) {
     const { error } = await supabase
-      .from('waitlist')
+      .from('Waitlist')
       .insert([{ email, created_at: new Date().toISOString() }])
 
     if (error && error.code !== '23505') throw error
