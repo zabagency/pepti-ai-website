@@ -1,14 +1,13 @@
 import { supabase } from './supabase'
 
 export async function submitWaitlist(email) {
-  // 1. Save to Supabase
-  const { error } = await supabase
-    .from('waitlist')
-    .insert([{ email, created_at: new Date().toISOString() }])
+  // 1. Save to Supabase (skipped if not yet configured)
+  if (supabase) {
+    const { error } = await supabase
+      .from('waitlist')
+      .insert([{ email, created_at: new Date().toISOString() }])
 
-  if (error) {
-    // Duplicate email (unique constraint) — not an error, just continue
-    if (error.code !== '23505') throw error
+    if (error && error.code !== '23505') throw error
   }
 
   // 2. Send welcome email via Resend
