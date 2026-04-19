@@ -17,7 +17,7 @@ try {
 const app  = express();
 const PORT = 3001;
 
-app.use(cors({ origin: ["http://localhost:5174", "http://localhost:5175", "http://localhost:5176"] }));
+app.use(cors({ origin: /^http:\/\/localhost(:\d+)?$/ }));
 app.use(express.json());
 
 // ── Quiz answer labels — mirrors Q_LABELS order in the quiz ──────────────────

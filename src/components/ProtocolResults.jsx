@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 
 async function generateProtocol(answers) {
-  const res = await fetch("http://localhost:3001/api/protocol", {
+  const res = await fetch("/api/protocol", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ answers }),
@@ -308,6 +308,30 @@ export default function ProtocolResults({ quizAnswers, email }) {
           <p style={{ fontFamily: "'Inter',sans-serif", fontSize: 14, color: "rgba(147,197,253,0.6)", maxWidth: 360, lineHeight: 1.65 }}>
             {error}
           </p>
+          <p style={{ fontFamily: "'Inter',sans-serif", fontSize: 12, color: "rgba(147,197,253,0.35)", maxWidth: 340, lineHeight: 1.65 }}>
+            Make sure the API server is running: <code style={{ color: "rgba(96,165,250,0.55)" }}>node server.js</code>
+          </p>
+          <button
+            onClick={() => {
+              called.current = false;
+              setStatus("loading");
+              setError("");
+              generateProtocol(quizAnswers)
+                .then(p  => { setProtocol(p); setStatus("ready"); })
+                .catch(e => { setError(e.message); setStatus("error"); });
+            }}
+            style={{
+              marginTop: 8, padding: "12px 32px",
+              background: "rgba(59,130,246,0.08)",
+              border: "1px solid rgba(59,130,246,0.3)",
+              borderRadius: 10, color: "#93C5FD",
+              fontFamily: "'Bebas Neue',sans-serif",
+              fontSize: 15, letterSpacing: "0.14em",
+              cursor: "pointer",
+            }}
+          >
+            TRY AGAIN
+          </button>
         </div>
       )}
 
