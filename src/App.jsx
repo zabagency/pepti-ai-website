@@ -6,12 +6,14 @@ import QuizCTASection from "./components/QuizCTASection.jsx";
 import PeptiQuiz from "./components/PeptiQuiz.jsx";
 import WaitlistGate from "./components/WaitlistGate.jsx";
 import ProtocolResults from "./components/ProtocolResults.jsx";
+import { createSession, trackQuizAnswers } from "./lib/trackSession.js";
 
 // mode: "page" | "quiz" | "waitlist" | "results"
 export default function App() {
   const [mode, setMode]           = useState("page");
   const [quizAnswers, setQuizAnswers] = useState(null);
   const [email, setEmail]         = useState("");
+  const [sessionId, setSessionId] = useState(null);
   const quizAnchorRef = useRef(null);
 
   // Lock/unlock body scroll based on mode
@@ -31,8 +33,12 @@ export default function App() {
     setMode("waitlist");
   };
 
-  const handleWaitlistSubmit = (emailVal) => {
-    setEmail(emailVal ?? "");
+  const handleWaitlistSubmit = async (emailVal) => {
+    const resolvedEmail = emailVal ?? "";
+    setEmail(resolvedEmail);
+    const sid = await createSession(resolvedEmail, navigator.userAgent);
+    setSessionId(sid);
+    if (sid && quizAnswers) trackQuizAnswers(sid, quizAnswers);
     setMode("results");
   };
 
@@ -53,7 +59,7 @@ export default function App() {
       {/* ── Full-screen fixed overlays ── */}
       {mode === "quiz"     && <PeptiQuiz onComplete={handleQuizComplete} />}
       {mode === "waitlist" && <WaitlistGate onUnlock={handleWaitlistSubmit} />}
-      {mode === "results"  && <ProtocolResults quizAnswers={quizAnswers} email={email} />}
+      {mode === "results"  && <ProtocolResults quizAnswers={quizAnswers} email={email} sessionId={sessionId} />}
     </>
   );
 }
