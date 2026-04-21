@@ -1,6 +1,10 @@
 import { useEffect, useState, useRef } from "react";
 import { getSolasLink } from '../lib/solasLinks';
 
+// ── Vial image (bg removed via canvas luminance pass) ────────────────────────
+const VIAL_SRC = 'data:image/png;base64,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';
+
+// ── Fetch function (unchanged) ────────────────────────────────────────────────
 async function generateProtocol(answers) {
   const res = await fetch("/api/protocol", {
     method: "POST",
@@ -12,215 +16,199 @@ async function generateProtocol(answers) {
   return data;
 }
 
-// ── Pharmaceutical Glass Vial ────────────────────────────────────────────────
-function VialObject({ peptide }) {
-  const { name, rgb } = peptide;
-  return (
-    <div style={{ width: 58, height: 170, position: "relative", userSelect: "none" }}>
-
-      {/* Rubber stopper */}
-      <div style={{
-        position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)",
-        width: 40, height: 22, borderRadius: "4px 4px 0 0",
-        background: "linear-gradient(160deg,#334155 0%,#1e293b 55%,#0f172a 100%)",
-        border: "1px solid rgba(255,255,255,0.08)",
-        boxShadow: "0 -3px 10px rgba(0,0,0,0.55), inset 0 1px 3px rgba(255,255,255,0.06)",
-      }}>
-        {[5, 10, 15].map(t => (
-          <div key={t} style={{ position: "absolute", top: t, left: 7, right: 7, height: 2, background: "rgba(0,0,0,0.28)", borderRadius: 1 }} />
-        ))}
-      </div>
-
-      {/* Neck */}
-      <div style={{
-        position: "absolute", top: 21, left: "50%", transform: "translateX(-50%)",
-        width: 28, height: 10,
-        background: "linear-gradient(180deg,rgba(51,65,85,0.85),rgba(10,15,30,0.95))",
-        border: "1px solid rgba(255,255,255,0.06)", borderTop: "none",
-      }} />
-
-      {/* Glass body */}
-      <div style={{
-        position: "absolute", top: 30, left: 0, right: 0, bottom: 0,
-        background: `linear-gradient(108deg,
-          rgba(255,255,255,0.08) 0%,
-          rgba(${rgb},0.04) 14%,
-          rgba(6,10,24,0.93) 32%,
-          rgba(${rgb},0.05) 56%,
-          rgba(6,10,24,0.9) 80%,
-          rgba(255,255,255,0.05) 100%)`,
-        border: `1px solid rgba(${rgb},0.4)`,
-        borderRadius: "3px 3px 14px 14px",
-        overflow: "hidden",
-        boxShadow: `inset 0 0 20px rgba(${rgb},0.08), 0 4px 28px rgba(0,0,0,0.55)`,
-      }}>
-        {/* Left glass shine */}
-        <div style={{
-          position: "absolute", left: 0, top: 0, bottom: 0, width: 9,
-          background: "linear-gradient(180deg,rgba(255,255,255,0.2) 0%,rgba(255,255,255,0.08) 50%,rgba(255,255,255,0.02) 100%)",
-          borderRadius: "3px 0 0 14px",
-        }} />
-        {/* Right shadow edge */}
-        <div style={{
-          position: "absolute", right: 0, top: 0, bottom: 0, width: 5,
-          background: "rgba(0,0,0,0.3)", borderRadius: "0 3px 14px 0",
-        }} />
-        {/* Liquid fill */}
-        <div style={{
-          position: "absolute", bottom: 0, left: 1, right: 1, height: "60%",
-          background: `linear-gradient(180deg,transparent 0%,rgba(${rgb},0.07) 38%,rgba(${rgb},0.22) 100%)`,
-          borderRadius: "0 0 13px 13px",
-        }} />
-        {/* Meniscus line */}
-        <div style={{
-          position: "absolute", bottom: "59%", left: 2, right: 2, height: 3,
-          background: `rgba(${rgb},0.28)`, borderRadius: 2, filter: "blur(1.5px)",
-        }} />
-        {/* Bubble details */}
-        <div style={{ position: "absolute", bottom: "34%", left: 9, width: 5, height: 5, borderRadius: "50%", background: `rgba(${rgb},0.35)`, boxShadow: `0 0 5px rgba(${rgb},0.6)` }} />
-        <div style={{ position: "absolute", bottom: "50%", right: 8, width: 3, height: 3, borderRadius: "50%", background: `rgba(${rgb},0.22)` }} />
-        {/* Label area */}
-        <div style={{
-          position: "absolute", top: "22%", bottom: "24%", left: 9, right: 9,
-          background: "rgba(255,255,255,0.025)",
-          border: "1px solid rgba(255,255,255,0.07)", borderRadius: 3,
-          display: "flex", alignItems: "center", justifyContent: "center",
-        }}>
-          <span style={{
-            writingMode: "vertical-rl", textOrientation: "mixed",
-            transform: "rotate(180deg)",
-            fontSize: 7, letterSpacing: "0.24em",
-            fontFamily: "'Inter',sans-serif", fontWeight: 700,
-            color: `rgba(${rgb},0.9)`, textTransform: "uppercase",
-            textShadow: `0 0 8px rgba(${rgb},0.65)`,
-          }}>{name}</span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ── Inline Info Panel ────────────────────────────────────────────────────────
-function InfoPanel({ peptide }) {
-  const { name, label, color, rgb, purpose, personalizedReason, dose, frequency, administration, researchBacking } = peptide;
+// ── Section label with trailing gradient line ────────────────────────────────
+function SectionLabel({ children }) {
   return (
     <div style={{
-      background: "rgba(255,255,255,0.03)",
-      backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)",
-      border: `1px solid rgba(${rgb},0.2)`,
-      borderRadius: 18, padding: "clamp(20px,4vw,30px)",
-      animation: "fadeUp 0.42s ease both",
+      display: "flex", alignItems: "center", gap: 10,
+      fontFamily: "'Space Mono',monospace", fontSize: 9,
+      letterSpacing: ".22em", color: "#4a9eff", marginBottom: 11,
     }}>
-      {/* Name + dose */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 10, marginBottom: 16 }}>
-        <div>
-          <div style={{ fontSize: 9, letterSpacing: "0.22em", fontWeight: 600, fontFamily: "'Inter',sans-serif", color, marginBottom: 6 }}>
-            {label}
-          </div>
-          <h3 style={{
-            fontFamily: "'Bebas Neue',sans-serif",
-            fontSize: "clamp(28px,6vw,42px)",
-            letterSpacing: "0.04em", color: "#FFFFFF", lineHeight: 1,
-            textShadow: `0 0 40px rgba(${rgb},0.45)`,
-          }}>{name}</h3>
-        </div>
-        <span style={{
-          fontSize: 11, letterSpacing: "0.12em", fontWeight: 500,
-          fontFamily: "'Inter',sans-serif", color,
-          background: `rgba(${rgb},0.1)`, border: `1px solid rgba(${rgb},0.28)`,
-          padding: "5px 14px", borderRadius: 100,
-          whiteSpace: "nowrap", alignSelf: "flex-start", marginTop: 4,
-        }}>{dose}</span>
-      </div>
-
-      {/* Purpose */}
-      <p style={{
-        fontFamily: "'Inter',sans-serif", fontSize: 14, fontWeight: 400,
-        lineHeight: 1.7, color: "rgba(226,232,240,0.85)", marginBottom: 16,
-      }}>{purpose}</p>
-
-      {/* Why for you */}
-      <div style={{
-        background: `rgba(${rgb},0.06)`, border: `1px solid rgba(${rgb},0.16)`,
-        borderRadius: 10, padding: "14px 16px", marginBottom: 18,
-      }}>
-        <div style={{ fontSize: 9, letterSpacing: "0.22em", color, fontFamily: "'Inter',sans-serif", fontWeight: 600, marginBottom: 7 }}>
-          WHY FOR YOU
-        </div>
-        <p style={{ fontFamily: "'Inter',sans-serif", fontSize: 13, fontWeight: 300, lineHeight: 1.7, color: "rgba(147,197,253,0.88)", margin: 0 }}>
-          {personalizedReason}
-        </p>
-      </div>
-
-      {/* Detail rows */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 16 }}>
-        {[["FREQUENCY", frequency], ["ADMINISTRATION", administration]].map(([l, v]) => (
-          <div key={l} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
-            <span style={{
-              fontSize: 9, letterSpacing: "0.18em", color: `rgba(${rgb},0.5)`,
-              fontFamily: "'Inter',sans-serif", fontWeight: 600,
-              flexShrink: 0, marginTop: 2, minWidth: 112,
-            }}>{l}</span>
-            <span style={{ fontFamily: "'Inter',sans-serif", fontSize: 13, fontWeight: 300, color: "rgba(226,232,240,0.82)", lineHeight: 1.55 }}>
-              {v}
-            </span>
-          </div>
-        ))}
-      </div>
-
-      {/* Research backing */}
-      <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 14 }}>
-        <div style={{ fontSize: 9, letterSpacing: "0.2em", color: "rgba(96,165,250,0.38)", fontFamily: "'Inter',sans-serif", fontWeight: 500, marginBottom: 7 }}>
-          RESEARCH BACKING
-        </div>
-        <p style={{ fontFamily: "'Inter',sans-serif", fontSize: 12, fontWeight: 300, lineHeight: 1.7, color: "rgba(147,197,253,0.48)", fontStyle: "italic", margin: 0 }}>
-          {researchBacking}
-        </p>
-      </div>
-
-      {/* Solas Science affiliate link */}
-      {(() => {
-        const solasUrl = getSolasLink(name)
-        if (!solasUrl) return null
-        return (
-          <a
-            href={solasUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: 'block',
-              marginTop: 16,
-              padding: '12px 18px',
-              background: 'rgba(74,158,255,.1)',
-              border: '1px solid rgba(74,158,255,.3)',
-              borderRadius: 10,
-              textAlign: 'center',
-              fontFamily: "'Space Mono', monospace",
-              fontSize: 10,
-              letterSpacing: '.18em',
-              color: '#4a9eff',
-              textDecoration: 'none',
-              cursor: 'pointer'
-            }}
-          >
-            VIEW ON SOLAS SCIENCE →
-          </a>
-        )
-      })()}
+      {children}
+      <div style={{ flex: 1, height: 1, background: "linear-gradient(90deg,rgba(74,158,255,.2),transparent)" }} />
     </div>
   );
 }
 
-// ── Main ─────────────────────────────────────────────────────────────────────
-export default function ProtocolResults({ quizAnswers, email }) {
-  const [status, setStatus]         = useState("loading");
-  const [protocol, setProtocol]     = useState(null);
-  const [error, setError]           = useState("");
-  const [activeIdx, setActiveIdx]   = useState(0);
-  const [copied, setCopied]         = useState(false);
-  const [isMobile, setIsMobile]     = useState(window.innerWidth < 600);
+// ── Info card rendered below the orbit ───────────────────────────────────────
+function InfoCard({ peptide, lifestyleNotes, visible }) {
+  if (!peptide) return null;
+  const { name, purpose, personalizedReason, dose, frequency, administration, researchBacking, rank } = peptide;
+  const solasUrl = getSolasLink(name);
+
+  return (
+    <div style={{
+      margin: "28px 16px 0",
+      background: "#0b0e1a",
+      border: "1px solid rgba(74,158,255,.2)",
+      borderRadius: 20,
+      overflow: "hidden",
+      position: "relative",
+      opacity: visible ? 1 : 0,
+      transform: visible ? "translateY(0)" : "translateY(12px)",
+      transition: "opacity .38s ease, transform .38s ease",
+    }}>
+      {/* Top highlight line (replaces ::before pseudo) */}
+      <div style={{
+        position: "absolute", top: 0, left: 0, right: 0, height: 1,
+        background: "linear-gradient(90deg,transparent,rgba(74,158,255,.45),transparent)",
+      }} />
+
+      {/* Card header */}
+      <div style={{ padding: "22px 22px 18px", borderBottom: "1px solid rgba(255,255,255,.05)" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+          <span style={{ fontFamily: "'Space Mono',monospace", fontSize: 9, letterSpacing: ".22em", color: "#4a9eff" }}>
+            ◈ COMPOUND {String(rank).padStart(2, "0")}
+          </span>
+          <span style={{
+            fontFamily: "'Space Mono',monospace", fontSize: 9, color: "rgba(80,105,150,.4)",
+            border: "1px solid rgba(255,255,255,.08)", borderRadius: 100,
+            padding: "4px 12px", background: "rgba(255,255,255,.03)",
+            display: "flex", alignItems: "center", gap: 6,
+          }}>
+            <span style={{ fontSize: 8, letterSpacing: ".1em" }}>RESEARCH RANGE</span>
+            <span style={{ fontSize: 10, color: "rgba(140,165,210,.7)" }}>{dose}</span>
+          </span>
+        </div>
+        <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 46, lineHeight: 1, letterSpacing: ".04em", color: "#fff", marginBottom: 5 }}>
+          {name}
+        </div>
+        <div style={{ fontSize: 12, color: "rgba(140,165,210,.58)", fontWeight: 300, letterSpacing: ".03em" }}>
+          {purpose}
+        </div>
+      </div>
+
+      {/* Card body */}
+      <div style={{ padding: "0 22px 24px" }}>
+
+        {/* Research Context */}
+        <div style={{ padding: "16px 0", borderBottom: "1px solid rgba(255,255,255,.05)" }}>
+          <SectionLabel>RESEARCH CONTEXT</SectionLabel>
+          <div style={{
+            background: "rgba(74,158,255,.04)", border: "1px solid rgba(74,158,255,.08)",
+            borderRadius: 10, padding: "13px 15px",
+            fontSize: 13, lineHeight: 1.78, color: "rgba(220,232,255,.7)", fontWeight: 300,
+          }}>
+            {personalizedReason}
+          </div>
+        </div>
+
+        {/* Compound Profile */}
+        <div style={{ padding: "16px 0", borderBottom: "1px solid rgba(255,255,255,.05)" }}>
+          <SectionLabel>COMPOUND PROFILE</SectionLabel>
+          {[
+            ["ADMINISTRATION TYPE", administration, true],
+            ["STUDIED FREQUENCY",   frequency,      false],
+          ].map(([lbl, val, hl], i, arr) => (
+            <div key={i} style={{
+              display: "flex", alignItems: "flex-start", justifyContent: "space-between",
+              gap: 12, padding: "8px 0",
+              borderBottom: i < arr.length - 1 ? "1px solid rgba(255,255,255,.035)" : "none",
+            }}>
+              <span style={{
+                fontFamily: "'Space Mono',monospace", fontSize: 9, letterSpacing: ".13em",
+                color: "rgba(80,105,150,.4)", paddingTop: 2, minWidth: 76, flexShrink: 0,
+              }}>{lbl}</span>
+              <span style={hl ? {
+                fontFamily: "'Space Mono',monospace", fontSize: 12,
+                color: "#4a9eff", fontWeight: 700, textAlign: "right",
+              } : {
+                fontSize: 12.5, color: "rgba(220,232,255,.9)",
+                textAlign: "right", lineHeight: 1.6, fontWeight: 300,
+              }}>{val}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Compound Stats */}
+        <div style={{ padding: "16px 0", borderBottom: "1px solid rgba(255,255,255,.05)" }}>
+          <SectionLabel>COMPOUND STATS</SectionLabel>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+            {[
+              ["DOSE",      dose],
+              ["FREQUENCY", frequency],
+              ["COMPOUND",  name],
+              ["STATUS",    "Research"],
+            ].map(([lbl, val], i) => (
+              <div key={i} style={{
+                background: "rgba(255,255,255,.025)",
+                border: "1px solid rgba(255,255,255,.05)",
+                borderRadius: 10, padding: "11px 13px",
+              }}>
+                <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 8, letterSpacing: ".16em", color: "rgba(80,105,150,.4)", marginBottom: 4 }}>{lbl}</div>
+                <div style={{ fontSize: 13, fontWeight: 500, color: "#fff", lineHeight: 1.3 }}>{val}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Research Backing */}
+        <div style={{ padding: "16px 0", borderBottom: lifestyleNotes?.length > 0 ? "1px solid rgba(255,255,255,.05)" : "none" }}>
+          <SectionLabel>RESEARCH BACKING</SectionLabel>
+          <p style={{
+            fontFamily: "'Space Mono',monospace", fontSize: 10.5,
+            lineHeight: 1.82, color: "rgba(80,105,150,.4)", fontStyle: "italic", margin: 0,
+          }}>{researchBacking}</p>
+        </div>
+
+        {/* General Considerations (protocol-level lifestyle notes) */}
+        {lifestyleNotes?.length > 0 && (
+          <div style={{ padding: "16px 0" }}>
+            <SectionLabel>GENERAL CONSIDERATIONS</SectionLabel>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {lifestyleNotes.map((note, j) => (
+                <div key={j} style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
+                  <span style={{
+                    fontFamily: "'Space Mono',monospace", fontSize: 9, fontWeight: 700,
+                    color: "#060810", background: "#4a9eff",
+                    width: 20, height: 20, minWidth: 20, borderRadius: "50%",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    flexShrink: 0, marginTop: 2,
+                  }}>{j + 1}</span>
+                  <p style={{ fontSize: 12.5, color: "rgba(220,232,255,.65)", lineHeight: 1.75, fontWeight: 300, margin: 0 }}>{note}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Solas Science affiliate link (getSolasLink logic preserved) */}
+        {solasUrl && (
+          <a href={solasUrl} target="_blank" rel="noopener noreferrer" style={{
+            display: "block", marginTop: 16, padding: "12px 18px",
+            background: "rgba(74,158,255,.1)", border: "1px solid rgba(74,158,255,.3)",
+            borderRadius: 10, textAlign: "center",
+            fontFamily: "'Space Mono',monospace", fontSize: 10,
+            letterSpacing: ".18em", color: "#4a9eff", textDecoration: "none",
+          }}>
+            VIEW ON SOLAS SCIENCE →
+          </a>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ── Main component ────────────────────────────────────────────────────────────
+export default function ProtocolResults({ quizAnswers }) {
+  // ── State (loading/error/ready preserved exactly) ─────────────────────────
+  const [status,    setStatus]   = useState("loading");
+  const [protocol,  setProtocol] = useState(null);
+  const [error,     setError]    = useState("");
+  const [activeIdx, setActiveIdx] = useState(0);
+  const [cardVisible, setCardVisible] = useState(false);
   const called = useRef(false);
 
+  // ── Orbit animation refs ──────────────────────────────────────────────────
+  const vialRefs   = useRef([null, null, null]);
+  const glowRefs   = useRef([null, null, null]);
+  const labelRefs  = useRef([null, null, null]);
+  const canvasRefs = useRef([null, null, null]);
+  const angleRef      = useRef(-Math.PI / 2);
+  const rafRef        = useRef(null);
+  const activeCardRef = useRef(0);
+
+  // ── Fetch protocol (logic unchanged) ─────────────────────────────────────
   useEffect(() => {
     if (called.current) return;
     called.current = true;
@@ -229,118 +217,137 @@ export default function ProtocolResults({ quizAnswers, email }) {
       .catch(e => { setError(e.message); setStatus("error"); });
   }, []);
 
-  useEffect(() => {
-    const fn = () => setIsMobile(window.innerWidth < 600);
-    window.addEventListener("resize", fn);
-    return () => window.removeEventListener("resize", fn);
-  }, []);
-
-  const handleShare = () => {
-    if (!protocol) return;
-    const lines = [
-      `MY PEPTI AI PROTOCOL: ${protocol.protocolName}`, "",
-      protocol.summary, "",
-      `PRIMARY: ${protocol.primaryPeptide?.name} — ${protocol.primaryPeptide?.dose}, ${protocol.primaryPeptide?.frequency}`,
-      `SECONDARY: ${protocol.secondaryPeptide?.name} — ${protocol.secondaryPeptide?.dose}, ${protocol.secondaryPeptide?.frequency}`,
-      protocol.supportPeptide ? `SUPPORT: ${protocol.supportPeptide?.name} — ${protocol.supportPeptide?.dose}` : null,
-      "", "Built with Pepti AI — peptiai.app",
-    ].filter(Boolean).join("\n");
-    navigator.clipboard.writeText(lines).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2500);
-    });
-  };
-
+  // ── Peptides array (structure preserved) ─────────────────────────────────
   const peptides = protocol ? [
-    protocol.primaryPeptide   && { ...protocol.primaryPeptide,   rank: 1, color: "#3B82F6", rgb: "59,130,246",  label: "PRIMARY"   },
-    protocol.secondaryPeptide && { ...protocol.secondaryPeptide, rank: 2, color: "#8B5CF6", rgb: "139,92,246", label: "SECONDARY" },
-    protocol.supportPeptide   && { ...protocol.supportPeptide,   rank: 3, color: "#06B6D4", rgb: "6,182,212",  label: "SUPPORT"   },
+    protocol.primaryPeptide   && { ...protocol.primaryPeptide,   rank: 1, label: "PRIMARY"   },
+    protocol.secondaryPeptide && { ...protocol.secondaryPeptide, rank: 2, label: "SECONDARY" },
+    protocol.supportPeptide   && { ...protocol.supportPeptide,   rank: 3, label: "SUPPORT"   },
   ].filter(Boolean) : [];
 
-  // Relative position of each peptide to the active one: -1 (left), 0 (center), +1 (right)
-  const getRelPos = (i) => {
-    const total = peptides.length;
-    let r = ((i - activeIdx) + total) % total;
-    if (r >= Math.ceil(total / 2)) r -= total;
-    return r; // always in {-1, 0, 1} for 2-3 peptides
+  // ── Canvas orbit animation ────────────────────────────────────────────────
+  useEffect(() => {
+    if (status !== "ready") return;
+    const count = peptides.length;
+    if (count === 0) return;
+
+    const RX = 95, RY = 28, CY = 20, speed = 0.002;
+
+    const sourceImg = new Image();
+    sourceImg.onload = function () {
+      // Luminance-based background removal
+      const off = document.createElement("canvas");
+      off.width  = sourceImg.naturalWidth;
+      off.height = sourceImg.naturalHeight;
+      const ctx = off.getContext("2d");
+      ctx.drawImage(sourceImg, 0, 0);
+      const imgData = ctx.getImageData(0, 0, off.width, off.height);
+      const d = imgData.data;
+      for (let p = 0; p < d.length; p += 4) {
+        const lum = 0.299 * d[p] + 0.587 * d[p + 1] + 0.114 * d[p + 2];
+        if (lum < 40)       d[p + 3] = 0;
+        else if (lum < 80)  d[p + 3] = Math.round(((lum - 40) / 40) * d[p + 3]);
+      }
+      ctx.putImageData(imgData, 0, 0);
+
+      // Draw processed image to each vial canvas
+      for (let i = 0; i < count; i++) {
+        const c = canvasRefs.current[i];
+        if (c) {
+          const cx = c.getContext("2d");
+          cx.clearRect(0, 0, c.width, c.height);
+          cx.drawImage(off, 0, 0, c.width, c.height);
+        }
+      }
+
+      // Show info card after image paints
+      setTimeout(() => setCardVisible(true), 300);
+
+      // RAF orbit loop
+      function frame() {
+        angleRef.current += speed;
+        for (let i = 0; i < count; i++) {
+          const a     = angleRef.current + i * ((2 * Math.PI) / count);
+          const x     = Math.cos(a) * RX;
+          const y     = Math.sin(a) * RY + CY;
+          const depth = (Math.sin(a) + 1) / 2;
+          const isActive = i === activeCardRef.current;
+          const glowO = isActive ? 0.7 : depth > 0.75 ? (depth - 0.75) * 2.5 : 0;
+
+          if (vialRefs.current[i]) {
+            vialRefs.current[i].style.transform = `translate(${x.toFixed(1)}px,${y.toFixed(1)}px) scale(${(0.52 + 0.48 * depth).toFixed(3)})`;
+            vialRefs.current[i].style.opacity   = (0.28 + 0.72 * depth).toFixed(2);
+            vialRefs.current[i].style.zIndex    = Math.round(depth * 10);
+            vialRefs.current[i].style.filter    = `brightness(${(0.32 + 0.68 * depth).toFixed(2)}) saturate(${(0.3 + 0.7 * depth).toFixed(2)})${isActive ? " drop-shadow(0 0 16px rgba(74,158,255,.5))" : ""}`;
+          }
+          if (glowRefs.current[i])  glowRefs.current[i].style.opacity  = glowO.toFixed(2);
+          if (labelRefs.current[i]) labelRefs.current[i].style.color   = isActive ? "#4a9eff" : "rgba(80,105,150,.4)";
+        }
+        rafRef.current = requestAnimationFrame(frame);
+      }
+      frame();
+    };
+    sourceImg.src = VIAL_SRC;
+
+    return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
+  }, [status]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── Vial tap handler ──────────────────────────────────────────────────────
+  const handleTap = (i) => {
+    const count = peptides.length;
+    activeCardRef.current = i;
+    let diff = (Math.PI / 2 - i * ((2 * Math.PI) / count)) - angleRef.current;
+    while (diff >  Math.PI) diff -= 2 * Math.PI;
+    while (diff < -Math.PI) diff += 2 * Math.PI;
+    angleRef.current += diff * 0.18;
+
+    setCardVisible(false);
+    setTimeout(() => { setActiveIdx(i); setCardVisible(true); }, 150);
   };
 
-  // CSS transform for each vial slot based on screen size + relative position
-  const getVialTransform = (relPos) => {
-    if (!isMobile) {
-      const xGap = peptides.length === 2 ? 140 : 152;
-      const x = relPos * xGap;
-      const scale = relPos === 0 ? 1 : 0.63;
-      return `translate(calc(-50% + ${x}px), -50%) scale(${scale})`;
-    }
-    // Mobile: active top-center, others below side-by-side
-    if (relPos === 0) return "translate(-50%, calc(-50% - 76px)) scale(1)";
-    return `translate(calc(-50% + ${relPos * 90}px), calc(-50% + 90px)) scale(0.53)`;
-  };
-
-  // Three fixed floor glow positions (left / center / right slots)
-  const FLOOR_SLOTS = peptides.length === 2 ? [-1, 0, 1].slice(0, 2) : [-1, 0, 1];
-  const floorGlows = peptides.map((p, i) => ({ peptide: p, relPos: getRelPos(i) }))
-    .filter(({ relPos }) => FLOOR_SLOTS.includes(relPos));
-
+  // ─────────────────────────────────────────────────────────────────────────
   return (
-    <div style={{
-      position: "fixed", inset: 0,
-      background: "linear-gradient(180deg,#05050f 0%,#0a0a1a 100%)",
-      overflowY: "auto", zIndex: 200, scrollbarWidth: "none",
-    }}>
+    <div style={{ position: "fixed", inset: 0, background: "#060810", overflowY: "auto", zIndex: 200, scrollbarWidth: "none" }}>
       <style>{`
-        @keyframes vial-spin {
-          from { transform: rotateY(0deg); }
-          to   { transform: rotateY(360deg); }
-        }
-        @keyframes floor-glow-pulse {
-          0%,100% { opacity: 0.65; }
-          50%      { opacity: 1; }
-        }
-        @keyframes particle-float {
-          0%   { transform: translateY(0);     opacity: 0; }
-          12%  { opacity: 0.55; }
-          88%  { opacity: 0.55; }
-          100% { transform: translateY(-68px); opacity: 0; }
-        }
-        .vial-slot {
-          position: absolute; top: 50%; left: 50%;
-          transition: transform 0.52s cubic-bezier(0.34,1.06,0.64,1), opacity 0.42s ease;
-        }
-        .vial-slot:not(.is-center) { cursor: pointer; }
-        .share-btn:hover {
-          border-color: rgba(59,130,246,0.55) !important;
-          background: rgba(59,130,246,0.07) !important;
-        }
-        .results-scroll::-webkit-scrollbar { display: none; }
+        @keyframes blink  { 0%,100%{opacity:1} 50%{opacity:.18} }
+        @keyframes wobble { 0%,100%{transform:perspective(400px) rotateY(-18deg)} 50%{transform:perspective(400px) rotateY(18deg)} }
+        @keyframes spin   { to{transform:rotate(360deg)} }
+        ::-webkit-scrollbar { display:none }
       `}</style>
+
+      {/* Background radial gradients */}
+      <div style={{
+        position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0,
+        background: [
+          "radial-gradient(ellipse 90% 45% at 50% -8%,rgba(20,70,200,.2) 0%,transparent 65%)",
+          "radial-gradient(ellipse 50% 50% at 15% 80%,rgba(10,35,120,.1) 0%,transparent 60%)",
+        ].join(","),
+      }} />
 
       {/* ── LOADING ── */}
       {status === "loading" && (
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh", gap: 24 }}>
-          <div style={{ width: 52, height: 52, borderRadius: "50%", border: "2px solid rgba(59,130,246,0.15)", borderTop: "2px solid #3B82F6", animation: "spin 1s linear infinite" }} />
-          <h2 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 22, letterSpacing: "0.22em", color: "#60A5FA", animation: "pulse 1.8s ease infinite" }}>
+          <div style={{ width: 52, height: 52, borderRadius: "50%", border: "2px solid rgba(74,158,255,.15)", borderTop: "2px solid #4a9eff", animation: "spin 1s linear infinite" }} />
+          <h2 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 22, letterSpacing: ".22em", color: "#4a9eff" }}>
             BUILDING YOUR PROTOCOL...
           </h2>
-          <p style={{ fontFamily: "'Inter',sans-serif", fontSize: 13, color: "rgba(147,197,253,0.38)", textAlign: "center", maxWidth: 300, lineHeight: 1.65 }}>
+          <p style={{ fontFamily: "'Space Mono',monospace", fontSize: 11, color: "rgba(140,165,210,.5)", textAlign: "center", maxWidth: 300, lineHeight: 1.65 }}>
             Analyzing your biology and cross-referencing peer-reviewed research.
           </p>
         </div>
       )}
 
-      {/* ── ERROR ── */}
+      {/* ── ERROR (logic + retry preserved exactly) ── */}
       {status === "error" && (
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh", gap: 16, textAlign: "center", padding: 24 }}>
           <div style={{ fontSize: 40 }}>⚠️</div>
-          <h2 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 30, color: "#F87171", letterSpacing: "0.04em" }}>
+          <h2 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 30, color: "#F87171", letterSpacing: ".04em" }}>
             SOMETHING WENT WRONG
           </h2>
-          <p style={{ fontFamily: "'Inter',sans-serif", fontSize: 14, color: "rgba(147,197,253,0.6)", maxWidth: 360, lineHeight: 1.65 }}>
+          <p style={{ fontFamily: "'Space Mono',monospace", fontSize: 12, color: "rgba(140,165,210,.6)", maxWidth: 360, lineHeight: 1.65 }}>
             {error}
           </p>
-          <p style={{ fontFamily: "'Inter',sans-serif", fontSize: 12, color: "rgba(147,197,253,0.35)", maxWidth: 340, lineHeight: 1.65 }}>
-            Make sure the API server is running: <code style={{ color: "rgba(96,165,250,0.55)" }}>node server.js</code>
+          <p style={{ fontFamily: "'Space Mono',monospace", fontSize: 10, color: "rgba(140,165,210,.35)", maxWidth: 340, lineHeight: 1.65 }}>
+            Make sure the API server is running: <code style={{ color: "rgba(74,158,255,.55)" }}>node server.js</code>
           </p>
           <button
             onClick={() => {
@@ -353,11 +360,9 @@ export default function ProtocolResults({ quizAnswers, email }) {
             }}
             style={{
               marginTop: 8, padding: "12px 32px",
-              background: "rgba(59,130,246,0.08)",
-              border: "1px solid rgba(59,130,246,0.3)",
-              borderRadius: 10, color: "#93C5FD",
-              fontFamily: "'Bebas Neue',sans-serif",
-              fontSize: 15, letterSpacing: "0.14em",
+              background: "rgba(74,158,255,.08)", border: "1px solid rgba(74,158,255,.3)",
+              borderRadius: 10, color: "#4a9eff",
+              fontFamily: "'Bebas Neue',sans-serif", fontSize: 15, letterSpacing: ".14em",
               cursor: "pointer",
             }}
           >
@@ -368,234 +373,110 @@ export default function ProtocolResults({ quizAnswers, email }) {
 
       {/* ── RESULTS ── */}
       {status === "ready" && protocol && (
-        <>
-          {/* Background particles */}
-          <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0, overflow: "hidden" }}>
-            {Array.from({ length: 14 }, (_, i) => (
-              <div key={i} style={{
-                position: "absolute",
-                left: `${9 + (i * 59) % 83}%`, top: `${8 + (i * 43) % 85}%`,
-                width: i % 3 === 0 ? 3 : 2, height: i % 3 === 0 ? 3 : 2,
-                borderRadius: "50%",
-                background: i % 2 === 0 ? "rgba(59,130,246,0.2)" : "rgba(139,92,246,0.16)",
-                animation: `particle-float ${7 + (i % 4) * 1.4}s ease-in-out ${i * 0.9}s infinite`,
-              }} />
+        <div style={{ position: "relative", zIndex: 1, maxWidth: 480, margin: "0 auto", paddingBottom: 60 }}>
+
+          {/* Disclaimer banner */}
+          <div style={{
+            margin: "20px 16px 0", padding: "11px 14px",
+            background: "rgba(74,158,255,.06)", border: "1px solid rgba(74,158,255,.15)",
+            borderRadius: 10, display: "flex", gap: 10, alignItems: "flex-start",
+          }}>
+            <span style={{ fontSize: 13, flexShrink: 0, marginTop: 1 }}>⚠</span>
+            <span style={{ fontFamily: "'Space Mono',monospace", fontSize: 9.5, lineHeight: 1.7, color: "rgba(140,165,210,.7)", letterSpacing: ".02em" }}>
+              Educational content only. Not medical advice. Pepti AI does not recommend dosages or protocols. Consult a licensed physician before using any research compound.
+            </span>
+          </div>
+
+          {/* Badge */}
+          <div style={{ textAlign: "center", padding: "40px 24px 0" }}>
+            <div style={{
+              display: "inline-flex", alignItems: "center", gap: 8,
+              border: "1px solid rgba(74,158,255,.2)", borderRadius: 100,
+              padding: "7px 18px", fontFamily: "'Space Mono',monospace",
+              fontSize: 10, letterSpacing: ".18em", color: "#4a9eff",
+              background: "rgba(74,158,255,.1)",
+            }}>
+              <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#4a9eff", boxShadow: "0 0 8px #4a9eff", animation: "blink 2.4s ease-in-out infinite" }} />
+              EDUCATION OVERVIEW
+            </div>
+          </div>
+
+          {/* Orbit scene */}
+          <div style={{ position: "relative", height: 300, marginTop: -24, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            {peptides.slice(0, 3).map((peptide, i) => (
+              <div
+                key={i}
+                ref={el => { vialRefs.current[i] = el; }}
+                onClick={() => handleTap(i)}
+                style={{ position: "absolute", display: "flex", flexDirection: "column", alignItems: "center", cursor: "pointer", willChange: "transform,opacity,filter" }}
+              >
+                <div style={{ position: "relative" }}>
+                  <div
+                    ref={el => { glowRefs.current[i] = el; }}
+                    style={{
+                      position: "absolute", bottom: -6, left: "50%", transform: "translateX(-50%)",
+                      borderRadius: "50%", width: 70, height: 16, opacity: 0,
+                      background: "radial-gradient(ellipse,rgba(74,158,255,.65) 0%,transparent 70%)",
+                      filter: "blur(9px)", pointerEvents: "none",
+                    }}
+                  />
+                  <canvas
+                    ref={el => { canvasRefs.current[i] = el; }}
+                    width={160} height={240}
+                    style={{
+                      display: "block", pointerEvents: "none",
+                      animation: "wobble 6s ease-in-out infinite",
+                      animationDelay: `${[0, -2, -4][i]}s`,
+                      transformOrigin: "center center",
+                    }}
+                  />
+                </div>
+                <span
+                  ref={el => { labelRefs.current[i] = el; }}
+                  style={{
+                    fontFamily: "'Space Mono',monospace", fontSize: 9, letterSpacing: ".14em",
+                    marginTop: -20, color: "rgba(80,105,150,.4)", whiteSpace: "nowrap",
+                  }}
+                >
+                  {peptide.name}
+                </span>
+              </div>
             ))}
           </div>
 
-          {/* ── ABOVE VIALS ── */}
+          {/* Tap hint */}
+          <p style={{ textAlign: "center", fontFamily: "'Space Mono',monospace", fontSize: 9, letterSpacing: ".2em", color: "rgba(80,105,150,.4)", paddingTop: 40 }}>
+            TAP A VIAL TO EXPLORE
+          </p>
+
+          {/* Info card */}
+          <InfoCard
+            peptide={peptides[activeIdx]}
+            lifestyleNotes={protocol.lifestyleNotes}
+            visible={cardVisible}
+          />
+
+          {/* Consult CTA */}
           <div style={{
-            position: "relative", zIndex: 1,
-            textAlign: "center",
-            padding: "clamp(44px,9vw,70px) clamp(20px,5vw,40px) 0",
-            animation: "fadeUp 0.7s ease both",
+            margin: "16px 16px 0", padding: "16px 18px",
+            border: "1px solid rgba(74,158,255,.15)", borderRadius: 14,
+            background: "rgba(74,158,255,.04)",
+            display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12,
           }}>
-            <div style={{
-              display: "inline-flex", alignItems: "center", gap: 7,
-              border: "1px solid rgba(59,130,246,0.26)", borderRadius: 100,
-              padding: "6px 16px", background: "rgba(59,130,246,0.05)", marginBottom: 20,
+            <span style={{ fontSize: 12, color: "rgba(140,165,210,.58)", lineHeight: 1.6, fontWeight: 300 }}>
+              Research compounds require medical supervision. Work with a licensed physician to determine if any compound is appropriate for you.
+            </span>
+            <span style={{
+              fontFamily: "'Space Mono',monospace", fontSize: 9, letterSpacing: ".14em",
+              color: "#4a9eff", border: "1px solid rgba(74,158,255,.2)", borderRadius: 100,
+              padding: "7px 14px", whiteSpace: "nowrap", cursor: "pointer",
+              background: "rgba(74,158,255,.1)", flexShrink: 0,
             }}>
-              <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#3B82F6", boxShadow: "0 0 8px #3B82F6" }} />
-              <span style={{ fontSize: 9, letterSpacing: "0.26em", color: "#60A5FA", fontFamily: "'Inter',sans-serif", fontWeight: 500 }}>
-                YOUR PERSONALIZED PROTOCOL
-              </span>
-            </div>
-
-            <h1 style={{
-              fontFamily: "'Bebas Neue',sans-serif",
-              fontSize: "clamp(36px,9vw,66px)",
-              letterSpacing: "0.04em", color: "#FFFFFF", lineHeight: 1,
-              marginBottom: 16, textShadow: "0 0 60px rgba(59,130,246,0.3)",
-            }}>
-              {protocol.protocolName}
-            </h1>
-
-            <p style={{
-              fontFamily: "'Inter',sans-serif",
-              fontSize: "clamp(13px,2.3vw,15px)",
-              fontWeight: 300, lineHeight: 1.74,
-              color: "rgba(147,197,253,0.62)",
-              maxWidth: 500, margin: "0 auto",
-            }}>
-              {protocol.summary}
-            </p>
-
-            <p style={{ fontFamily: "'Inter',sans-serif", fontSize: 10, color: "rgba(96,165,250,0.28)", letterSpacing: "0.12em", marginTop: 18 }}>
-              TAP A VIAL TO EXPLORE
-            </p>
+              FIND A CLINIC
+            </span>
           </div>
 
-          {/* ── VIAL SCENE ── */}
-          <div style={{
-            position: "relative", zIndex: 1,
-            width: "100%",
-            height: isMobile ? 390 : 310,
-          }}>
-            {/* Floor radial glows — one per vial position, always present */}
-            {floorGlows.map(({ peptide: p, relPos }) => {
-              const isActive = relPos === 0;
-              const xGap = peptides.length === 2 ? 140 : 152;
-              const xOffset = isMobile
-                ? (relPos === 0 ? 0 : relPos * 90)
-                : relPos * xGap;
-              const yBottom = isMobile
-                ? (relPos === 0 ? 390 - 220 : 390 - 330) // px from top → convert to bottom
-                : 28;
-              return (
-                <div key={relPos} style={{
-                  position: "absolute",
-                  bottom: yBottom,
-                  left: `calc(50% + ${xOffset}px)`,
-                  transform: "translateX(-50%)",
-                  width: isActive ? 140 : 82,
-                  height: isActive ? 30 : 17,
-                  background: `radial-gradient(ellipse, rgba(${p.rgb},${isActive ? 0.55 : 0.22}) 0%, transparent 70%)`,
-                  filter: "blur(9px)",
-                  animation: `floor-glow-pulse ${isActive ? 2.2 : 3.6}s ease-in-out ${relPos === -1 ? 0.6 : relPos === 1 ? 1.1 : 0}s infinite`,
-                  pointerEvents: "none",
-                  transition: "width 0.5s ease, height 0.5s ease",
-                }} />
-              );
-            })}
-
-            {/* Vials */}
-            {peptides.map((peptide, i) => {
-              const relPos = getRelPos(i);
-              const isCenter = relPos === 0;
-              const spinDuration = isCenter ? "7s" : "11s";
-              return (
-                <div
-                  key={i}
-                  className={`vial-slot${isCenter ? " is-center" : ""}`}
-                  style={{
-                    transform: getVialTransform(relPos),
-                    opacity: isCenter ? 1 : 0.42,
-                    zIndex: isCenter ? 3 : 1,
-                  }}
-                  onClick={() => !isCenter && setActiveIdx(i)}
-                >
-                  {/* Perspective wrapper for 3D spin */}
-                  <div style={{ perspective: "500px" }}>
-                    <div style={{ animation: `vial-spin ${spinDuration} linear infinite` }}>
-                      <VialObject peptide={peptide} />
-                    </div>
-                  </div>
-
-                  {/* Rank badge below vial */}
-                  <div style={{
-                    textAlign: "center", marginTop: 10,
-                    fontSize: 8, letterSpacing: "0.22em",
-                    fontFamily: "'Inter',sans-serif", fontWeight: 600,
-                    color: isCenter ? peptide.color : `rgba(${peptide.rgb},0.38)`,
-                    transition: "color 0.4s ease",
-                  }}>
-                    {peptide.label}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* ── INFO PANEL + BELOW ── */}
-          <div style={{
-            position: "relative", zIndex: 1,
-            maxWidth: 580, margin: "0 auto",
-            padding: "clamp(12px,3vw,22px) clamp(16px,5vw,32px) clamp(64px,10vw,100px)",
-          }}>
-
-            {/* Info card — key triggers fresh fade animation on switch */}
-            {peptides[activeIdx] && (
-              <div key={activeIdx} style={{ marginBottom: 16 }}>
-                <InfoPanel peptide={peptides[activeIdx]} />
-              </div>
-            )}
-
-            {/* Lifestyle optimizations */}
-            {protocol.lifestyleNotes?.length > 0 && (
-              <div style={{
-                background: "rgba(255,255,255,0.025)",
-                border: "1px solid rgba(59,130,246,0.1)",
-                borderRadius: 16, padding: "clamp(20px,4vw,28px)",
-                marginBottom: 14,
-                animation: "fadeUp 0.6s ease 200ms both",
-              }}>
-                <div style={{ fontSize: 9, letterSpacing: "0.26em", color: "rgba(96,165,250,0.4)", fontFamily: "'Inter',sans-serif", fontWeight: 500, marginBottom: 20 }}>
-                  LIFESTYLE OPTIMIZATIONS
-                </div>
-                <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                  {protocol.lifestyleNotes.map((note, i) => (
-                    <div key={i} style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
-                      <div style={{
-                        width: 26, height: 26, borderRadius: "50%", flexShrink: 0,
-                        background: "rgba(59,130,246,0.09)", border: "1px solid rgba(59,130,246,0.2)",
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                        fontSize: 11, color: "#60A5FA", fontFamily: "'Bebas Neue',sans-serif",
-                        marginTop: 1,
-                      }}>{i + 1}</div>
-                      <p style={{ fontFamily: "'Inter',sans-serif", fontSize: 14, fontWeight: 300, lineHeight: 1.72, color: "rgba(226,232,240,0.8)", margin: 0 }}>
-                        {note}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Disclaimer */}
-            {protocol.disclaimer && (
-              <div style={{
-                padding: "14px 18px",
-                background: "rgba(248,113,113,0.025)",
-                border: "1px solid rgba(248,113,113,0.08)",
-                borderRadius: 10, marginBottom: 14,
-                animation: "fadeUp 0.6s ease 280ms both",
-              }}>
-                <p style={{ fontFamily: "'Inter',sans-serif", fontSize: 11, fontWeight: 300, lineHeight: 1.72, color: "rgba(252,165,165,0.4)", margin: 0 }}>
-                  {protocol.disclaimer}
-                </p>
-              </div>
-            )}
-
-            {/* Full app coming soon */}
-            <div style={{
-              background: "rgba(59,130,246,0.04)",
-              border: "1px solid rgba(59,130,246,0.13)",
-              borderRadius: 16, padding: "clamp(22px,4vw,30px)",
-              textAlign: "center", marginBottom: 12,
-              animation: "fadeUp 0.6s ease 360ms both",
-            }}>
-              <div style={{ fontSize: 24, marginBottom: 10, display: "inline-block", animation: "checkPop 0.6s cubic-bezier(0.34,1.56,0.64,1) 1s both" }}>✓</div>
-              <h3 style={{
-                fontFamily: "'Bebas Neue',sans-serif",
-                fontSize: "clamp(18px,4vw,26px)",
-                letterSpacing: "0.05em", color: "#DBEAFE", marginBottom: 8,
-              }}>
-                Full app coming soon — you&apos;re on the list
-              </h3>
-              <p style={{ fontFamily: "'Inter',sans-serif", fontSize: 13, fontWeight: 300, color: "rgba(147,197,253,0.4)" }}>
-                We&apos;ll notify {email} when Pepti AI launches.
-              </p>
-            </div>
-
-            {/* Share */}
-            <button
-              className="share-btn"
-              onClick={handleShare}
-              style={{
-                width: "100%", padding: "15px 24px",
-                background: "transparent",
-                border: "1px solid rgba(59,130,246,0.24)",
-                borderRadius: 10, color: "#93C5FD",
-                fontFamily: "'Bebas Neue',sans-serif",
-                fontSize: 16, letterSpacing: "0.14em",
-                cursor: "pointer", transition: "all 0.3s ease",
-                animation: "fadeUp 0.6s ease 420ms both",
-              }}
-            >
-              {copied ? "COPIED TO CLIPBOARD ✓" : "SHARE MY PROTOCOL"}
-            </button>
-          </div>
-        </>
+        </div>
       )}
     </div>
   );
