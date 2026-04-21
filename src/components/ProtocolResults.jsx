@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { getSolasLink } from '../lib/solasLinks';
 
 async function generateProtocol(answers) {
   const res = await fetch("/api/protocol", {
@@ -176,6 +177,36 @@ function InfoPanel({ peptide }) {
           {researchBacking}
         </p>
       </div>
+
+      {/* Solas Science affiliate link */}
+      {(() => {
+        const solasUrl = getSolasLink(name)
+        if (!solasUrl) return null
+        return (
+          <a
+            href={solasUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'block',
+              marginTop: 16,
+              padding: '12px 18px',
+              background: 'rgba(74,158,255,.1)',
+              border: '1px solid rgba(74,158,255,.3)',
+              borderRadius: 10,
+              textAlign: 'center',
+              fontFamily: "'Space Mono', monospace",
+              fontSize: 10,
+              letterSpacing: '.18em',
+              color: '#4a9eff',
+              textDecoration: 'none',
+              cursor: 'pointer'
+            }}
+          >
+            VIEW ON SOLAS SCIENCE →
+          </a>
+        )
+      })()}
     </div>
   );
 }
