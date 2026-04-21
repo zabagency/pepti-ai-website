@@ -35,10 +35,16 @@ export default function App() {
 
   const handleWaitlistSubmit = async (emailVal) => {
     const resolvedEmail = emailVal ?? "";
+    console.log('[app] handleWaitlistSubmit → email:', resolvedEmail, '| quizAnswers keys:', quizAnswers ? Object.keys(quizAnswers).length : 0);
     setEmail(resolvedEmail);
     const sid = await createSession(resolvedEmail, navigator.userAgent);
+    console.log('[app] sessionId returned:', sid);
     setSessionId(sid);
-    if (sid && quizAnswers) trackQuizAnswers(sid, quizAnswers);
+    if (sid && quizAnswers) {
+      trackQuizAnswers(sid, quizAnswers);
+    } else {
+      console.warn('[app] trackQuizAnswers skipped — sid:', sid, '| quizAnswers:', !!quizAnswers);
+    }
     setMode("results");
   };
 

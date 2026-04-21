@@ -1,6 +1,11 @@
 import { supabase } from './supabase'
 
 export async function createSession(email, deviceType) {
+  if (!supabase) {
+    console.warn('[tracking] Supabase not configured — skipping createSession')
+    return null
+  }
+  console.log('[tracking] createSession →', email, deviceType)
   try {
     const { data, error } = await supabase
       .from('quiz_sessions')
@@ -11,14 +16,25 @@ export async function createSession(email, deviceType) {
       }])
       .select()
     if (error) throw error
-    return data[0].id
+    const sid = data[0].id
+    console.log('[tracking] createSession ✓ sessionId =', sid)
+    return sid
   } catch (err) {
-    console.error('Session tracking error:', err)
+    console.error('[tracking] createSession ✗', err)
     return null
   }
 }
 
 export async function trackQuizAnswers(sessionId, answers) {
+  if (!supabase) {
+    console.warn('[tracking] Supabase not configured — skipping trackQuizAnswers')
+    return
+  }
+  if (!sessionId) {
+    console.warn('[tracking] trackQuizAnswers — no sessionId, skipping')
+    return
+  }
+  console.log('[tracking] trackQuizAnswers → sessionId:', sessionId, '| answer count:', Object.keys(answers).length)
   try {
     const rows = Object.entries(answers).map(([key, value]) => ({
       session_id: sessionId,
@@ -29,12 +45,22 @@ export async function trackQuizAnswers(sessionId, answers) {
     }))
     const { error } = await supabase.from('quiz_answers').insert(rows)
     if (error) throw error
+    console.log('[tracking] trackQuizAnswers ✓', rows.length, 'rows inserted')
   } catch (err) {
-    console.error('Answer tracking error:', err)
+    console.error('[tracking] trackQuizAnswers ✗', err)
   }
 }
 
 export async function trackProtocolOutput(sessionId, email, protocol) {
+  if (!supabase) {
+    console.warn('[tracking] Supabase not configured — skipping trackProtocolOutput')
+    return
+  }
+  if (!sessionId) {
+    console.warn('[tracking] trackProtocolOutput — no sessionId, skipping')
+    return
+  }
+  console.log('[tracking] trackProtocolOutput → sessionId:', sessionId, '| protocol:', protocol?.protocolName)
   try {
     const { error } = await supabase
       .from('protocol_outputs')
@@ -50,19 +76,31 @@ export async function trackProtocolOutput(sessionId, email, protocol) {
         created_at: new Date().toISOString()
       }])
     if (error) throw error
+    console.log('[tracking] trackProtocolOutput ✓')
   } catch (err) {
-    console.error('Protocol tracking error:', err)
+    console.error('[tracking] trackProtocolOutput ✗', err)
   }
 }
 
 export async function trackSolasClick(sessionId) {
+  if (!supabase) {
+    console.warn('[tracking] Supabase not configured — skipping trackSolasClick')
+    return
+  }
+  if (!sessionId) {
+    console.warn('[tracking] trackSolasClick — no sessionId, skipping')
+    return
+  }
+  console.log('[tracking] trackSolasClick → sessionId:', sessionId)
   try {
-    await supabase
+    const { error } = await supabase
       .from('protocol_outputs')
       .update({ solas_link_clicked: true })
       .eq('session_id', sessionId)
+    if (error) throw error
+    console.log('[tracking] trackSolasClick ✓')
   } catch (err) {
-    console.error('Solas click tracking error:', err)
+    console.error('[tracking] trackSolasClick ✗', err)
   }
 }
 

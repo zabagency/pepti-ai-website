@@ -206,6 +206,12 @@ export default function ProtocolResults({ quizAnswers, email, sessionId }) {
   const [cardVisible, setCardVisible] = useState(false);
   const called = useRef(false);
 
+  // ── Keep latest sessionId/email in refs so the fetch closure always reads current values ──
+  const sessionIdRef = useRef(sessionId);
+  const emailRef     = useRef(email);
+  useEffect(() => { sessionIdRef.current = sessionId; }, [sessionId]);
+  useEffect(() => { emailRef.current     = email;     }, [email]);
+
   // ── Orbit animation refs ──────────────────────────────────────────────────
   const vialRefs   = useRef([null, null, null]);
   const glowRefs   = useRef([null, null, null]);
@@ -220,7 +226,12 @@ export default function ProtocolResults({ quizAnswers, email, sessionId }) {
     if (called.current) return;
     called.current = true;
     generateProtocol(quizAnswers)
-      .then(p  => { setProtocol(p); setStatus("ready"); trackProtocolOutput(sessionId, email, p); })
+      .then(p  => {
+        setProtocol(p);
+        setStatus("ready");
+        console.log('[results] protocol loaded, calling trackProtocolOutput → sessionId:', sessionIdRef.current, '| email:', emailRef.current);
+        trackProtocolOutput(sessionIdRef.current, emailRef.current, p);
+      })
       .catch(e => { setError(e.message); setStatus("error"); });
   }, []);
 
