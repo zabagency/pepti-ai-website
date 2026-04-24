@@ -38,7 +38,7 @@ function InfoCard({ peptide, lifestyleNotes, visible, sessionId }) {
   const solasUrl = getSolasLink(name);
 
   return (
-    <div style={{
+    <div className="info-card-wrap" style={{
       margin: "28px 16px 0",
       background: "#0b0e1a",
       border: "1px solid rgba(74,158,255,.2)",
@@ -56,12 +56,12 @@ function InfoCard({ peptide, lifestyleNotes, visible, sessionId }) {
       }} />
 
       {/* Card header */}
-      <div style={{ padding: "22px 22px 18px", borderBottom: "1px solid rgba(255,255,255,.05)" }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+      <div className="card-header" style={{ padding: "22px 22px 18px", borderBottom: "1px solid rgba(255,255,255,.05)" }}>
+        <div className="card-header-row" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
           <span style={{ fontFamily: "'Space Mono',monospace", fontSize: 9, letterSpacing: ".22em", color: "#4a9eff" }}>
             ◈ COMPOUND {String(rank).padStart(2, "0")}
           </span>
-          <span style={{
+          <span className="card-range-pill" style={{
             fontFamily: "'Space Mono',monospace", fontSize: 9, color: "rgba(80,105,150,.4)",
             border: "1px solid rgba(255,255,255,.08)", borderRadius: 100,
             padding: "4px 12px", background: "rgba(255,255,255,.03)",
@@ -71,7 +71,7 @@ function InfoCard({ peptide, lifestyleNotes, visible, sessionId }) {
             <span style={{ fontSize: 10, color: "rgba(140,165,210,.7)" }}>{dose}</span>
           </span>
         </div>
-        <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 46, lineHeight: 1, letterSpacing: ".04em", color: "#fff", marginBottom: 5 }}>
+        <div className="card-peptide-name" style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 46, lineHeight: 1, letterSpacing: ".04em", color: "#fff", marginBottom: 5 }}>
           {name}
         </div>
         <div style={{ fontSize: 12, color: "rgba(140,165,210,.58)", fontWeight: 300, letterSpacing: ".03em" }}>
@@ -80,7 +80,7 @@ function InfoCard({ peptide, lifestyleNotes, visible, sessionId }) {
       </div>
 
       {/* Card body */}
-      <div style={{ padding: "0 22px 24px" }}>
+      <div className="card-body" style={{ padding: "0 22px 24px" }}>
 
         {/* Research Context */}
         <div style={{ padding: "16px 0", borderBottom: "1px solid rgba(255,255,255,.05)" }}>
@@ -330,6 +330,14 @@ export default function ProtocolResults({ quizAnswers, email, sessionId }) {
         @keyframes wobble { 0%,100%{transform:perspective(400px) rotateY(-18deg)} 50%{transform:perspective(400px) rotateY(18deg)} }
         @keyframes spin   { to{transform:rotate(360deg)} }
         ::-webkit-scrollbar { display:none }
+        @media (max-width: 480px) {
+          .info-card-wrap { margin: 16px 8px 0 !important; }
+          .card-header    { padding: 14px 14px 12px !important; }
+          .card-header-row { flex-direction: column !important; align-items: flex-start !important; gap: 6px !important; }
+          .card-range-pill { font-size: 8px !important; padding: 3px 8px !important; }
+          .card-peptide-name { font-size: 26px !important; margin-bottom: 4px !important; }
+          .card-body      { padding: 0 14px 16px !important; }
+        }
       `}</style>
 
       {/* Background radial gradients */}

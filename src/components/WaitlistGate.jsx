@@ -26,7 +26,12 @@ export default function WaitlistGate({ onUnlock }) {
 
   return (
     <div style={s.page}>
-      <div style={s.card}>
+      <style>{`
+        @media (max-width: 480px) {
+          .waitlist-card { padding: 24px 18px !important; }
+        }
+      `}</style>
+      <div className="waitlist-card" style={s.card}>
         <div style={s.topLine} />
 
         {status === 'success' ? (
@@ -89,6 +94,7 @@ const s = {
     padding: '24px 16px',
     fontFamily: "'Inter', sans-serif",
     zIndex: 200,
+    overflowY: 'auto',
   },
   card: {
     background: '#0b0e1a',

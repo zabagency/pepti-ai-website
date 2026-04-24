@@ -44,7 +44,7 @@ export default function HeroSection({ onStart }) {
         }} />
       </div>
 
-      <div style={{
+      <div className="hero-inner" style={{
         maxWidth: 1200, width: "100%", margin: "0 auto",
         display: "flex",
         flexDirection: "row",
@@ -56,13 +56,14 @@ export default function HeroSection({ onStart }) {
         {/* ── Left: Text content (55%) ── */}
         <div
           ref={leftRef}
+          className="hero-left"
           style={{
             flex: "0 0 55%",
             maxWidth: 580,
           }}
         >
           {/* Pill label */}
-          <div style={{
+          <div className="hero-pill" style={{
             display: "inline-flex", alignItems: "center", gap: 8,
             border: "1px solid rgba(59,130,246,0.35)",
             padding: "7px 16px", borderRadius: 100,
@@ -112,6 +113,7 @@ export default function HeroSection({ onStart }) {
 
           {/* CTA Button */}
           <button
+            className="hero-cta"
             onClick={onStart}
             style={{
               display: "inline-block",
@@ -135,7 +137,7 @@ export default function HeroSection({ onStart }) {
           </button>
 
           {/* Social proof */}
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div className="hero-social" style={{ display: "flex", alignItems: "center", gap: 10 }}>
             {/* Avatar stack */}
             <div style={{ display: "flex" }}>
               {["#3B82F6","#8B5CF6","#06B6D4"].map((c, i) => (
@@ -158,7 +160,7 @@ export default function HeroSection({ onStart }) {
         </div>
 
         {/* ── Right: Phone mockup (45%) ── */}
-        <div style={{
+        <div className="hero-right" style={{
           flex: "0 0 45%",
           display: "flex", justifyContent: "center", alignItems: "center",
           paddingTop: 32,
@@ -176,17 +178,24 @@ export default function HeroSection({ onStart }) {
         </div>
       </div>
 
-      {/* Mobile: stack layout */}
+      {/* Mobile: responsive layout */}
       <style>{`
         @media (max-width: 768px) {
-          .hero-inner { flex-direction: column !important; }
+          .hero-inner { flex-direction: column !important; gap: 24px !important; }
           .hero-left  { flex: unset !important; max-width: 100% !important; text-align: center; }
-          .hero-right { flex: unset !important; transform: scale(0.85); margin-top: 20px; }
+          .hero-right { flex: unset !important; padding-top: 0 !important; }
           .hero-left h1 { font-size: clamp(38px, 10vw, 54px) !important; }
-          .hero-cta-row { justify-content: center; }
         }
         @media (max-width: 480px) {
-          .hero-right { transform: scale(0.72); margin-top: 0; }
+          .hero-inner { flex-direction: row !important; gap: 12px !important; align-items: center !important; }
+          .hero-left  { flex: 0 0 52% !important; max-width: 52% !important; text-align: left !important; }
+          .hero-right { flex: 0 0 44% !important; padding-top: 0 !important; transform: scale(0.78); transform-origin: center center; }
+          .hero-left h1 { font-size: 28px !important; line-height: 1.05 !important; margin-bottom: 10px !important; }
+          .hero-left p  { font-size: 11px !important; margin-bottom: 16px !important; line-height: 1.6 !important; }
+          .hero-pill    { margin-bottom: 12px !important; padding: 5px 10px !important; }
+          .hero-pill span { font-size: 8px !important; }
+          .hero-cta     { padding: 12px 20px !important; font-size: 13px !important; margin-bottom: 10px !important; }
+          .hero-social  { display: none !important; }
         }
       `}</style>
     </section>
