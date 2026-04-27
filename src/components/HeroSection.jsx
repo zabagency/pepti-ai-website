@@ -166,7 +166,7 @@ export default function HeroSection({ onStart }) {
           paddingTop: 32,
         }}>
           {/* Glow behind phone */}
-          <div style={{ position: "relative" }}>
+          <div className="hero-phone-wrap" style={{ position: "relative" }}>
             <div style={{
               position: "absolute", top: "20%", left: "50%", transform: "translateX(-50%)",
               width: "140%", height: "60%",
@@ -187,15 +187,20 @@ export default function HeroSection({ onStart }) {
           .hero-left h1 { font-size: clamp(38px, 10vw, 54px) !important; }
         }
         @media (max-width: 480px) {
-          .hero-inner { flex-direction: row !important; gap: 12px !important; align-items: center !important; }
-          .hero-left  { flex: 0 0 52% !important; max-width: 52% !important; text-align: left !important; }
-          .hero-right { flex: 0 0 44% !important; padding-top: 0 !important; transform: scale(0.78); transform-origin: center center; }
-          .hero-left h1 { font-size: 28px !important; line-height: 1.05 !important; margin-bottom: 10px !important; }
-          .hero-left p  { font-size: 11px !important; margin-bottom: 16px !important; line-height: 1.6 !important; }
-          .hero-pill    { margin-bottom: 12px !important; padding: 5px 10px !important; }
+          /* Two-column row layout — column widths sum to 96% leaving room for the 8px gap */
+          .hero-inner     { flex-direction: row !important; gap: 8px !important; align-items: center !important; }
+          .hero-left      { flex: 0 0 50% !important; max-width: 50% !important; text-align: left !important; min-width: 0 !important; }
+          /* Right column clips the 570px layout height of the phone — phone is scaled visually to ~285px */
+          .hero-right     { flex: 0 0 46% !important; padding-top: 0 !important; overflow: hidden !important; max-height: 310px !important; justify-content: center !important; }
+          /* Scale phone to 50% — 264×0.5=132px visual width, fits within ~46% column on any screen ≥360px.
+             transform-origin top center keeps it horizontally centred and anchored at the top so max-height clips cleanly. */
+          .hero-phone-wrap { transform: scale(0.5) !important; transform-origin: top center !important; }
+          .hero-left h1   { font-size: 26px !important; line-height: 1.05 !important; margin-bottom: 10px !important; }
+          .hero-left p    { font-size: 11px !important; margin-bottom: 14px !important; line-height: 1.55 !important; }
+          .hero-pill      { margin-bottom: 10px !important; padding: 5px 10px !important; }
           .hero-pill span { font-size: 8px !important; }
-          .hero-cta     { padding: 12px 20px !important; font-size: 13px !important; margin-bottom: 10px !important; }
-          .hero-social  { display: none !important; }
+          .hero-cta       { padding: 11px 18px !important; font-size: 13px !important; margin-bottom: 8px !important; }
+          .hero-social    { display: none !important; }
         }
       `}</style>
     </section>
