@@ -330,6 +330,7 @@ export default function ProtocolResults({ quizAnswers, email, sessionId }) {
         @keyframes wobble { 0%,100%{transform:perspective(400px) rotateY(-18deg)} 50%{transform:perspective(400px) rotateY(18deg)} }
         @keyframes spin   { to{transform:rotate(360deg)} }
         ::-webkit-scrollbar { display:none }
+        canvas { -webkit-touch-callout: none !important; user-select: none !important; -webkit-user-select: none !important; }
         @media (max-width: 480px) {
           .info-card-wrap { margin: 16px 8px 0 !important; }
           .card-header    { padding: 14px 14px 12px !important; }
@@ -428,12 +429,16 @@ export default function ProtocolResults({ quizAnswers, email, sessionId }) {
           </div>
 
           {/* Orbit scene */}
-          <div style={{ position: "relative", height: 300, marginTop: -24, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div
+            onContextMenu={e => e.preventDefault()}
+            style={{ position: "relative", height: 300, marginTop: -24, display: "flex", alignItems: "center", justifyContent: "center", WebkitTouchCallout: "none", userSelect: "none", WebkitUserSelect: "none" }}
+          >
             {peptides.slice(0, 3).map((peptide, i) => (
               <div
                 key={i}
                 ref={el => { vialRefs.current[i] = el; }}
                 onClick={() => handleTap(i)}
+                onContextMenu={e => e.preventDefault()}
                 style={{ position: "absolute", display: "flex", flexDirection: "column", alignItems: "center", cursor: "pointer", willChange: "transform,opacity,filter" }}
               >
                 <div style={{ position: "relative" }}>
