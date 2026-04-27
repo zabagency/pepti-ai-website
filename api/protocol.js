@@ -3,13 +3,10 @@
 
 const Q_LABELS = [
   "Goals (priority order)", "Body composition goal", "Current symptoms",
-  "Symptom severity (1–5)", "Energy patterns", "Sleep quality (1–10)",
-  "Training frequency", "Diet quality", "Stress level",
-  "Changes in last 12 months", "Blood sugar regulation", "Age range",
-  "Biological sex", "Approximate weight", "Cancer history",
-  "Existing conditions", "Current medications", "Known allergies",
-  "Pregnancy status", "Peptide experience", "Comfort with injection",
-  "Preferred administration", "Monthly budget",
+  "Energy patterns", "Sleep quality (1–10)", "Training frequency",
+  "Stress level", "Age range", "Biological sex", "Cancer history",
+  "Existing conditions (incl. blood sugar)", "Current medications", "Known allergies",
+  "Pregnancy status", "Peptide experience", "Preferred administration", "Monthly budget",
 ];
 
 function buildUserContext(answers) {
@@ -34,7 +31,21 @@ const SYSTEM_PROMPT = `You are an expert peptide protocol consultant with deep k
   "lifestyleNotes": ["string", "string", "string"],
   "disclaimer": "string"
 }
-Base all recommendations on peer-reviewed research. Personalize specifically to their inputs. Never recommend anything contraindicated by their stated health conditions.`;
+
+Use all provided inputs to personalise the protocol:
+- Goals and body composition goal drive primary compound selection.
+- Current symptoms and energy patterns inform peptide priorities and personalizedReason.
+- Sleep quality and stress level are key inputs — address directly where relevant.
+- Training frequency informs recovery and performance compound choices.
+- Age and biological sex affect dosing context and hormone-adjacent recommendations.
+- Cancer history and existing conditions (including any blood sugar / insulin resistance flag) are hard safety constraints — never recommend anything contraindicated.
+- Current medications may interact; note relevant cautions in lifestyleNotes.
+- Known allergies and pregnancy status are absolute contraindication filters.
+- Peptide experience level sets protocol complexity — beginners get simpler, lower-dose starting points.
+- Preferred administration method must be respected; do not recommend injectables if the user selected oral/nasal.
+- Monthly budget constrains compound selection; stay within the stated range.
+
+Base all recommendations on peer-reviewed research. Never recommend anything contraindicated by stated health conditions or medications.`;
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {

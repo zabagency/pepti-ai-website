@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 
-// ─── Questions (23 total) ─────────────────────────────────────────────────────
+// ─── Questions (17 total) ─────────────────────────────────────────────────────
 const GOAL_OPTS = [
   "Muscle & Performance","Fat Loss","Injury Recovery","Longevity & Anti-Aging",
   "Cognitive Performance","Sleep Optimization","Sexual Health","Immune Support",
@@ -15,33 +15,23 @@ const QUESTIONS = [
     type: "single",  opts: ["Lose Fat","Build Muscle","Recomposition","Maintain"] },
   { q: "Which symptoms do you currently experience?",
     type: "multi",   opts: ["Joint / tendon pain","Gut issues","Poor sleep","Brain fog","Low energy","Low libido","Slow healing","Frequent illness","Skin / hair changes","Anxiety / stress","None"] },
-  { q: "How severely do these symptoms affect your daily life?",
-    type: "scale5" },
   { q: "How would you describe your energy throughout the day?",
     type: "single",  opts: ["Consistent and strong","Morning good / afternoon crash","Low all day","Unpredictable","Caffeine dependent"] },
   { q: "How would you rate your sleep quality?",
     type: "slider",  min: 1, max: 10, labelLow: "Terrible", labelHigh: "Perfect" },
   { q: "How often do you train or exercise?",
     type: "single",  opts: ["Never / rarely","1-2× per week","3-4× per week","5-6× per week","Daily or twice daily"] },
-  { q: "How would you describe your diet?",
-    type: "single",  opts: ["Very clean and tracked","Mostly healthy","Average","Poor / high processed","Actively restricting"] },
   { q: "How would you rate your stress levels?",
     type: "single",  opts: ["Low","Moderate","High but functional","Chronic","Burnout"] },
-  { q: "Have you noticed any of the following in the last 12 months?",
-    type: "multi",   opts: ["Unexplained weight gain","Hair thinning","Skin texture changes","Muscle loss despite training","Mood changes","Decreased libido","Night sweats","None"] },
-  { q: "How is your blood sugar regulation?",
-    type: "single",  opts: ["Very stable","Occasional crashes","Frequent spikes / crashes","Diagnosed insulin resistance","I don't know"] },
   { q: "What is your age range?",
     type: "single",  opts: ["18-24","25-34","35-44","45-54","55+"] },
   { q: "What is your biological sex?",
     type: "single",  opts: ["Male","Female","Prefer not to say"] },
-  { q: "What is your approximate body weight?",
-    type: "single",  opts: ["Under 140 lbs","140-180 lbs","180-220 lbs","220+ lbs"] },
   { q: "Have you ever been diagnosed with or treated for cancer?",
     type: "single",  opts: ["Never","In remission 5+ years","In remission under 5 years","Active","Unsure"] },
   { q: "Do you have any of the following conditions?",
     type: "multi",   hasOther: true,
-    opts: ["Type 1/2 Diabetes","Thyroid disorder","Autoimmune condition","Cardiovascular disease","Kidney / liver disease","Epilepsy","None","Other"] },
+    opts: ["Type 1/2 Diabetes","Thyroid disorder","Autoimmune condition","Cardiovascular disease","Kidney / liver disease","Epilepsy","Poor blood sugar regulation / insulin resistance","None","Other"] },
   { q: "Are you currently taking any of the following?",
     type: "multi",   opts: ["Prescription medications","HRT","TRT","Birth control","Insulin / blood sugar medication","Blood thinners","None"] },
   { q: "Do you have any known allergies?",
@@ -50,15 +40,13 @@ const QUESTIONS = [
     type: "single",  opts: ["Not Pregnant","Currently pregnant","Breastfeeding","Planning within 6 months"] },
   { q: "What is your peptide experience level?",
     type: "single",  opts: ["Complete beginner","Done some research","Used before","Experienced with multiple protocols"] },
-  { q: "How do you feel about self-injection?",
-    type: "single",  opts: ["Hard no","Open but nervous","Comfortable","Experienced"] },
   { q: "What is your preferred administration method?",
     type: "single",  opts: ["Injectable","Oral / capsule","Nasal spray","No preference"] },
   { q: "What is your monthly budget for your protocol?",
     type: "single",  opts: ["Under $100","$100-200","$200-350","$350-500","$500+"] },
 ];
 
-const N_Q = QUESTIONS.length; // 23
+const N_Q = QUESTIONS.length; // 17
 const INTRO_TEXT = "YOUR PROTOCOL IS BEING CALIBRATED";
 const TURNS = 3.2, RAD = 2.2, HGHT = 20;
 const SCALE5_LABELS = ["Barely noticeable", "", "Moderate impact", "", "Severely impacts life"];
