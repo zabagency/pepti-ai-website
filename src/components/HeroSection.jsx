@@ -18,7 +18,7 @@ export default function HeroSection({ onStart }) {
   }, []);
 
   return (
-    <section style={{
+    <section className="hero-section" style={{
       minHeight: "100vh",
       display: "flex", alignItems: "center",
       padding: "clamp(80px, 10vw, 100px) clamp(20px, 6vw, 80px) clamp(60px, 8vw, 80px)",
@@ -187,14 +187,11 @@ export default function HeroSection({ onStart }) {
           .hero-left h1 { font-size: clamp(38px, 10vw, 54px) !important; }
         }
         @media (max-width: 480px) {
-          /* Two-column row layout — column widths sum to 96% leaving room for the 8px gap */
+          .hero-section   { overflow: visible !important; }
           .hero-inner     { flex-direction: row !important; gap: 8px !important; align-items: center !important; }
           .hero-left      { flex: 0 0 50% !important; max-width: 50% !important; text-align: left !important; min-width: 0 !important; }
-          /* Right column clips the 570px layout height of the phone — phone is scaled visually to ~285px */
-          .hero-right     { flex: 0 0 46% !important; padding-top: 0 !important; overflow: hidden !important; max-height: 310px !important; justify-content: center !important; }
-          /* Scale phone to 50% — 264×0.5=132px visual width, fits within ~46% column on any screen ≥360px.
-             transform-origin top center keeps it horizontally centred and anchored at the top so max-height clips cleanly. */
-          .hero-phone-wrap { transform: scale(0.5) !important; transform-origin: top center !important; }
+          .hero-right     { flex: 0 0 46% !important; padding-top: 0 !important; overflow: visible !important; max-height: none !important; justify-content: center !important; }
+          .hero-phone-wrap { transform: scale(0.66) !important; transform-origin: center center !important; }
           .hero-left h1   { font-size: 26px !important; line-height: 1.05 !important; margin-bottom: 10px !important; }
           .hero-left p    { font-size: 11px !important; margin-bottom: 14px !important; line-height: 1.55 !important; }
           .hero-pill      { margin-bottom: 10px !important; padding: 5px 10px !important; }
