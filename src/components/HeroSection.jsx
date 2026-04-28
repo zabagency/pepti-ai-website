@@ -187,18 +187,17 @@ export default function HeroSection({ onStart }) {
           .hero-left h1 { font-size: clamp(38px, 10vw, 54px) !important; }
         }
         @media (max-width: 480px) {
-          .hero-section   { overflow: visible !important; }
+          .hero-section   { overflow-x: hidden !important; }
           .hero-inner     { flex-direction: row !important; gap: 8px !important; align-items: center !important; }
           .hero-left      { flex: 0 0 50% !important; max-width: 50% !important; text-align: left !important; min-width: 0 !important; }
-          .hero-right     { flex: 0 0 46% !important; padding-top: 0 !important; overflow: visible !important; max-height: none !important; justify-content: center !important; }
-          .hero-phone-wrap { transform: scale(0.66) !important; transform-origin: center center !important; }
+          .hero-right     { flex: 0 0 46% !important; max-width: 46% !important; padding-top: 0 !important; overflow: hidden !important; max-height: none !important; justify-content: center !important; margin-right: -8px !important; }
+          .hero-phone-wrap { transform: scale(0.55) !important; transform-origin: top right !important; }
           .hero-left h1   { font-size: 26px !important; line-height: 1.05 !important; margin-bottom: 10px !important; }
           .hero-left p    { font-size: 11px !important; margin-bottom: 14px !important; line-height: 1.55 !important; }
           .hero-pill      { margin-bottom: 10px !important; padding: 5px 10px !important; }
           .hero-pill span { font-size: 8px !important; }
           .hero-cta       { padding: 11px 18px !important; font-size: 13px !important; margin-bottom: 8px !important; }
           .hero-social    { display: none !important; }
-          /* Suppress the 140%-wide glow div that bleeds outside the column */
           .hero-phone-glow { display: none !important; }
         }
       `}</style>
