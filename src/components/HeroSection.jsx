@@ -167,7 +167,7 @@ export default function HeroSection({ onStart }) {
         }}>
           {/* Glow behind phone */}
           <div className="hero-phone-wrap" style={{ position: "relative" }}>
-            <div style={{
+            <div className="hero-phone-glow" style={{
               position: "absolute", top: "20%", left: "50%", transform: "translateX(-50%)",
               width: "140%", height: "60%",
               background: "radial-gradient(ellipse, rgba(59,130,246,0.14) 0%, transparent 70%)",
@@ -198,6 +198,8 @@ export default function HeroSection({ onStart }) {
           .hero-pill span { font-size: 8px !important; }
           .hero-cta       { padding: 11px 18px !important; font-size: 13px !important; margin-bottom: 8px !important; }
           .hero-social    { display: none !important; }
+          /* Suppress the 140%-wide glow div that bleeds outside the column */
+          .hero-phone-glow { display: none !important; }
         }
       `}</style>
     </section>
