@@ -32,7 +32,7 @@ function SectionLabel({ children }) {
 }
 
 // ── Info card rendered below the orbit ───────────────────────────────────────
-function InfoCard({ peptide, lifestyleNotes, visible, sessionId }) {
+function InfoCard({ peptide, visible, sessionId }) {
   if (!peptide) return null;
   const { name, purpose, personalizedReason, dose, frequency, administration, researchBacking, rank } = peptide;
   const solasUrl = getSolasLink(name);
@@ -49,7 +49,7 @@ function InfoCard({ peptide, lifestyleNotes, visible, sessionId }) {
       transform: visible ? "translateY(0)" : "translateY(12px)",
       transition: "opacity .38s ease, transform .38s ease",
     }}>
-      {/* Top highlight line (replaces ::before pseudo) */}
+      {/* Top highlight line */}
       <div style={{
         position: "absolute", top: 0, left: 0, right: 0, height: 1,
         background: "linear-gradient(90deg,transparent,rgba(74,158,255,.45),transparent)",
@@ -82,9 +82,9 @@ function InfoCard({ peptide, lifestyleNotes, visible, sessionId }) {
       {/* Card body */}
       <div className="card-body" style={{ padding: "0 22px 24px" }}>
 
-        {/* Research Context */}
+        {/* WHY THIS FOR YOU */}
         <div style={{ padding: "16px 0", borderBottom: "1px solid rgba(255,255,255,.05)" }}>
-          <SectionLabel>RESEARCH CONTEXT</SectionLabel>
+          <SectionLabel>WHY THIS FOR YOU</SectionLabel>
           <div style={{
             background: "rgba(74,158,255,.04)", border: "1px solid rgba(74,158,255,.08)",
             borderRadius: 10, padding: "13px 15px",
@@ -94,57 +94,26 @@ function InfoCard({ peptide, lifestyleNotes, visible, sessionId }) {
           </div>
         </div>
 
-        {/* Compound Profile */}
+        {/* QUICK STATS — 3 pills in a row */}
         <div style={{ padding: "16px 0", borderBottom: "1px solid rgba(255,255,255,.05)" }}>
-          <SectionLabel>COMPOUND PROFILE</SectionLabel>
-          {[
-            ["ADMINISTRATION TYPE", administration, true],
-            ["STUDIED FREQUENCY",   frequency,      false],
-          ].map(([lbl, val, hl], i, arr) => (
-            <div key={i} style={{
-              display: "flex", alignItems: "flex-start", justifyContent: "space-between",
-              gap: 12, padding: "8px 0",
-              borderBottom: i < arr.length - 1 ? "1px solid rgba(255,255,255,.035)" : "none",
-            }}>
-              <span style={{
-                fontFamily: "'Space Mono',monospace", fontSize: 9, letterSpacing: ".13em",
-                color: "rgba(80,105,150,.4)", paddingTop: 2, minWidth: 76, flexShrink: 0,
-              }}>{lbl}</span>
-              <span style={hl ? {
-                fontFamily: "'Space Mono',monospace", fontSize: 12,
-                color: "#4a9eff", fontWeight: 700, textAlign: "right",
-              } : {
-                fontSize: 12.5, color: "rgba(220,232,255,.9)",
-                textAlign: "right", lineHeight: 1.6, fontWeight: 300,
-              }}>{val}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* Compound Stats */}
-        <div style={{ padding: "16px 0", borderBottom: "1px solid rgba(255,255,255,.05)" }}>
-          <SectionLabel>COMPOUND STATS</SectionLabel>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-            {[
-              ["DOSE",      dose],
-              ["FREQUENCY", frequency],
-              ["COMPOUND",  name],
-              ["STATUS",    "Research"],
-            ].map(([lbl, val], i) => (
+          <SectionLabel>QUICK STATS</SectionLabel>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            {[administration, frequency, "Research compound"].map((val, i) => (
               <div key={i} style={{
-                background: "rgba(255,255,255,.025)",
-                border: "1px solid rgba(255,255,255,.05)",
-                borderRadius: 10, padding: "11px 13px",
+                background: "rgba(74,158,255,.06)",
+                border: "1px solid rgba(74,158,255,.2)",
+                borderRadius: 100, padding: "6px 14px",
+                fontFamily: "'Space Mono',monospace", fontSize: 10,
+                color: "rgba(140,165,210,.8)", whiteSpace: "nowrap",
               }}>
-                <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 8, letterSpacing: ".16em", color: "rgba(80,105,150,.4)", marginBottom: 4 }}>{lbl}</div>
-                <div style={{ fontSize: 13, fontWeight: 500, color: "#fff", lineHeight: 1.3 }}>{val}</div>
+                {val}
               </div>
             ))}
           </div>
         </div>
 
-        {/* Research Backing */}
-        <div style={{ padding: "16px 0", borderBottom: lifestyleNotes?.length > 0 ? "1px solid rgba(255,255,255,.05)" : "none" }}>
+        {/* RESEARCH BACKING */}
+        <div style={{ padding: "16px 0", borderBottom: solasUrl ? "1px solid rgba(255,255,255,.05)" : "none" }}>
           <SectionLabel>RESEARCH BACKING</SectionLabel>
           <p style={{
             fontFamily: "'Space Mono',monospace", fontSize: 10.5,
@@ -152,28 +121,7 @@ function InfoCard({ peptide, lifestyleNotes, visible, sessionId }) {
           }}>{researchBacking}</p>
         </div>
 
-        {/* General Considerations (protocol-level lifestyle notes) */}
-        {lifestyleNotes?.length > 0 && (
-          <div style={{ padding: "16px 0" }}>
-            <SectionLabel>GENERAL CONSIDERATIONS</SectionLabel>
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              {lifestyleNotes.map((note, j) => (
-                <div key={j} style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
-                  <span style={{
-                    fontFamily: "'Space Mono',monospace", fontSize: 9, fontWeight: 700,
-                    color: "#060810", background: "#4a9eff",
-                    width: 20, height: 20, minWidth: 20, borderRadius: "50%",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    flexShrink: 0, marginTop: 2,
-                  }}>{j + 1}</span>
-                  <p style={{ fontSize: 12.5, color: "rgba(220,232,255,.65)", lineHeight: 1.75, fontWeight: 300, margin: 0 }}>{note}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Solas Science affiliate link (getSolasLink logic preserved) */}
+        {/* Solas Science affiliate link */}
         {solasUrl && (
           <a
             href={solasUrl}
@@ -330,7 +278,8 @@ export default function ProtocolResults({ quizAnswers, email, sessionId }) {
         @keyframes wobble { 0%,100%{transform:perspective(400px) rotateY(-18deg)} 50%{transform:perspective(400px) rotateY(18deg)} }
         @keyframes spin   { to{transform:rotate(360deg)} }
         ::-webkit-scrollbar { display:none }
-        canvas { -webkit-touch-callout: none !important; user-select: none !important; -webkit-user-select: none !important; }
+        canvas { display: block; background: transparent !important; -webkit-touch-callout: none !important; user-select: none !important; -webkit-user-select: none !important; }
+        .orbit-scene { background: transparent !important; }
         @media (max-width: 480px) {
           .info-card-wrap { margin: 16px 8px 0 !important; }
           .card-header    { padding: 14px 14px 12px !important; }
@@ -430,8 +379,9 @@ export default function ProtocolResults({ quizAnswers, email, sessionId }) {
 
           {/* Orbit scene */}
           <div
+            className="orbit-scene"
             onContextMenu={e => e.preventDefault()}
-            style={{ position: "relative", height: 300, marginTop: -24, display: "flex", alignItems: "center", justifyContent: "center", WebkitTouchCallout: "none", userSelect: "none", WebkitUserSelect: "none" }}
+            style={{ position: "relative", height: 300, marginTop: -24, display: "flex", alignItems: "center", justifyContent: "center", background: "transparent", WebkitTouchCallout: "none", userSelect: "none", WebkitUserSelect: "none" }}
           >
             {peptides.slice(0, 3).map((peptide, i) => (
               <div
@@ -483,7 +433,6 @@ export default function ProtocolResults({ quizAnswers, email, sessionId }) {
           {/* Info card */}
           <InfoCard
             peptide={peptides[activeIdx]}
-            lifestyleNotes={protocol.lifestyleNotes}
             visible={cardVisible}
             sessionId={sessionId}
           />
