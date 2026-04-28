@@ -180,25 +180,50 @@ export default function HeroSection({ onStart }) {
 
       {/* Mobile: responsive layout */}
       <style>{`
-        @media (max-width: 768px) {
-          .hero-inner { flex-direction: column !important; gap: 24px !important; }
-          .hero-left  { flex: unset !important; max-width: 100% !important; text-align: center; }
-          .hero-right { flex: unset !important; padding-top: 0 !important; }
-          .hero-left h1 { font-size: clamp(38px, 10vw, 54px) !important; }
-        }
         @media (max-width: 480px) {
-          .hero-section   { overflow-x: hidden !important; }
-          .hero-inner     { flex-direction: row !important; gap: 8px !important; align-items: center !important; }
-          .hero-left      { flex: 0 0 50% !important; max-width: 50% !important; text-align: left !important; min-width: 0 !important; }
-          .hero-right     { flex: 0 0 46% !important; max-width: 46% !important; padding-top: 0 !important; overflow: hidden !important; max-height: none !important; justify-content: center !important; margin-right: -8px !important; }
-          .hero-phone-wrap { transform: scale(0.55) !important; transform-origin: top right !important; }
-          .hero-left h1   { font-size: 26px !important; line-height: 1.05 !important; margin-bottom: 10px !important; }
-          .hero-left p    { font-size: 11px !important; margin-bottom: 14px !important; line-height: 1.55 !important; }
-          .hero-pill      { margin-bottom: 10px !important; padding: 5px 10px !important; }
-          .hero-pill span { font-size: 8px !important; }
-          .hero-cta       { padding: 11px 18px !important; font-size: 13px !important; margin-bottom: 8px !important; }
-          .hero-social    { display: none !important; }
+          /* Section: no horizontal overflow, reduced padding */
+          .hero-section {
+            overflow-x: hidden !important;
+            padding: 80px 24px 48px !important;
+            align-items: flex-start !important;
+          }
+          /* Stack vertically */
+          .hero-inner {
+            flex-direction: column !important;
+            align-items: center !important;
+            gap: 32px !important;
+            width: 100% !important;
+            max-width: 100% !important;
+          }
+          /* Text block: full width, centered */
+          .hero-left {
+            flex: unset !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            text-align: center !important;
+          }
+          .hero-left h1 { font-size: 42px !important; line-height: 1.0 !important; }
+          .hero-left p  { font-size: 14px !important; max-width: 100% !important; margin-left: auto !important; margin-right: auto !important; }
+          .hero-cta     { font-size: 18px !important; padding: 16px 36px !important; }
+          /* Phone block: centered below text, constrained width, no transform hacks */
+          .hero-right {
+            flex: unset !important;
+            width: 100% !important;
+            max-width: 240px !important;
+            margin: 0 auto !important;
+            padding-top: 0 !important;
+            overflow: visible !important;
+            justify-content: center !important;
+          }
+          .hero-phone-wrap {
+            transform: none !important;
+            width: 100% !important;
+            display: flex !important;
+            justify-content: center !important;
+          }
+          /* Hide decorative elements that can bleed */
           .hero-phone-glow { display: none !important; }
+          .hero-social     { display: none !important; }
         }
       `}</style>
     </section>
