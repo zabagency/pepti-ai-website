@@ -201,7 +201,7 @@ export default function ProtocolResults({ quizAnswers, email, sessionId }) {
     const sourceImg = new Image();
     sourceImg.onerror = (e) => console.error('[vial] image load failed', e);
     sourceImg.onload = function () {
-      console.log('[vial] onload fired, naturalWidth:', sourceImg.naturalWidth);
+      console.log('[vial] image loaded, naturalWidth:', sourceImg.naturalWidth);
       // Luminance-based background removal
       const off = document.createElement("canvas");
       off.width  = sourceImg.naturalWidth;
@@ -404,13 +404,7 @@ export default function ProtocolResults({ quizAnswers, email, sessionId }) {
                     }}
                   />
                   <canvas
-                    ref={el => {
-                      canvasRefs.current[i] = el;
-                      if (el) {
-                        const ctx = el.getContext("2d");
-                        ctx.clearRect(0, 0, el.width, el.height);
-                      }
-                    }}
+                    ref={el => { canvasRefs.current[i] = el; }}
                     width={160} height={240}
                     style={{
                       display: "block", pointerEvents: "none",
