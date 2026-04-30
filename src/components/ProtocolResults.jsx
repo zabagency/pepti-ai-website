@@ -13,10 +13,10 @@ function Vial({ active }) {
         width: '100%',
         height: '100%',
         objectFit: 'contain',
-        opacity: active ? 1 : 0.45,
+        opacity: active ? 1 : 0.55,
         filter: active
-          ? 'drop-shadow(0 0 24px rgba(74,158,255,0.35))'
-          : 'brightness(0.6)',
+          ? 'drop-shadow(0 0 32px rgba(74,158,255,0.5)) drop-shadow(0 0 12px rgba(74,158,255,0.3))'
+          : 'brightness(0.75) drop-shadow(0 0 8px rgba(74,158,255,0.1))',
         transition: 'opacity 0.4s ease, filter 0.4s ease',
         pointerEvents: 'none',
         WebkitUserSelect: 'none',
@@ -191,6 +191,11 @@ export default function ProtocolResults({ quizAnswers, email, sessionId }) {
   const rafRef        = useRef(null);
   const activeCardRef = useRef(0);
 
+  // ── Drag-to-rotate refs ───────────────────────────────────────────────────
+  const isDragging     = useRef(false);
+  const dragStartX     = useRef(0);
+  const dragStartAngle = useRef(0);
+
   // ── Fetch protocol (logic unchanged) ─────────────────────────────────────
   useEffect(() => {
     if (called.current) return;
@@ -225,7 +230,7 @@ export default function ProtocolResults({ quizAnswers, email, sessionId }) {
 
     // RAF orbit loop
     function frame() {
-      angleRef.current += speed;
+      if (!isDragging.current) angleRef.current += speed;
       for (let i = 0; i < count; i++) {
         const a     = angleRef.current + i * ((2 * Math.PI) / count);
         const x     = Math.cos(a) * RX;
@@ -261,6 +266,22 @@ export default function ProtocolResults({ quizAnswers, email, sessionId }) {
 
     setCardVisible(false);
     setTimeout(() => { setActiveIdx(i); setCardVisible(true); }, 150);
+  };
+
+  // ── Drag-to-rotate handlers ────────────────────────────────────────────
+  const handleDragStart = (e) => {
+    isDragging.current = true;
+    dragStartX.current = e.touches ? e.touches[0].clientX : e.clientX;
+    dragStartAngle.current = angleRef.current;
+  };
+  const handleDragMove = (e) => {
+    if (!isDragging.current) return;
+    const currentX = e.touches ? e.touches[0].clientX : e.clientX;
+    const deltaX = currentX - dragStartX.current;
+    angleRef.current = dragStartAngle.current + (deltaX / 1.5) * (Math.PI / 180);
+  };
+  const handleDragEnd = () => {
+    isDragging.current = false;
   };
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -372,7 +393,14 @@ export default function ProtocolResults({ quizAnswers, email, sessionId }) {
           {/* Orbit scene */}
           <div
             className="orbit-scene"
-            style={{ position: "relative", height: 300, marginTop: -24, display: "flex", alignItems: "center", justifyContent: "center", background: "transparent" }}
+            onMouseDown={handleDragStart}
+            onMouseMove={handleDragMove}
+            onMouseUp={handleDragEnd}
+            onMouseLeave={handleDragEnd}
+            onTouchStart={handleDragStart}
+            onTouchMove={handleDragMove}
+            onTouchEnd={handleDragEnd}
+            style={{ position: "relative", height: 300, marginTop: -24, display: "flex", alignItems: "center", justifyContent: "center", background: "transparent", touchAction: "none" }}
           >
             {peptides.slice(0, 3).map((peptide, i) => (
               <div
